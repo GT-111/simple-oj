@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-submit = Blueprint('submit', __name__)
+submit_view = Blueprint('submit', __name__)
 
 from . import api

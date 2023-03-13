@@ -4,10 +4,10 @@ from flask_login import login_required, current_user
 from response import Response
 from extentions import login_manager, bcrypt
 from submit.model import Submit
-from ..submit import submit
+from submit import submit_view
 
 
-@submit.route('/', method=['POST'])
+@submit_view.route('/', methods=['POST'])
 @login_required
 def submit():
     _user_id = request.json.data['user_id']
@@ -22,7 +22,7 @@ def submit():
     return r.to_json()
 
 
-@submit.route('/histories')
+@submit_view.route('/histories')
 @login_required
 def submit_histories():
     _user_id = current_user['id']

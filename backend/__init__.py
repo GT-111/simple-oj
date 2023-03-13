@@ -5,18 +5,18 @@ from flask import Flask, g, render_template, request
 from database import db
 from extentions import bcrypt, login_manager, mail
 
-from account import account
-from problem import problem
-from submit import submit
+from account import account_view
+from problem import problem_view
+from submit import submit_view
 
 
 def create_app():
     """Returns an initialized Flask application."""
     app = Flask('simple-oj')
     app.config['MONGODB_SETTINGS'] = {
-        'db': 'simple-oj',
+        'db': 'sustc_oj',
         'host': 'localhost',
-        'port': '27017'
+        'port': 27017
     }
 
     register_extensions(app)
@@ -46,9 +46,13 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(account, url_prefix='/account')
-    app.register_blueprint(problem, url_prefix='/problem')
-    app.register_blueprint(submit, url_prefix='/submit')
+    app.register_blueprint(account_view, url_prefix='/account')
+    app.register_blueprint(problem_view, url_prefix='/problem')
+    app.register_blueprint(submit_view, url_prefix='/submit')
+
+
+app = create_app()
+app.run()
 
 
 # def register_errorhandlers(app):

@@ -7,10 +7,10 @@ from database import db
 from extentions import login_manager
 from auth import filter
 from problem.model import Problem
-from ..problem import problem
+from problem import problem_view
 
 
-@problem.route('/')
+@problem_view.route('/')
 def problems_list():
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
@@ -21,7 +21,7 @@ def problems_list():
     return r.to_json()
 
 
-@problem.route('/<_id>')
+@problem_view.route('/<_id>')
 def problem_detail(_id: str):
     _problem = Problem.objects.first_or_404(id=_id, activated=True)
     r = Response()
@@ -30,9 +30,9 @@ def problem_detail(_id: str):
     return r.to_json()
 
 
-@problem.route('/create', method=['POST'])
+@problem_view.route('/create', methods=['POST'])
 @login_required
-@filter.level_2_required
+@filter.level_required(2)
 def create_problem():
     content = request.get_json()
     _problem = Problem(**content).save()
@@ -42,9 +42,9 @@ def create_problem():
     return r.to_json()
 
 
-@problem.route('/verify/<id>')
+@problem_view.route('/verify/<id>')
 @login_required
-@filter.level_3_required
+@filter.level_required(3)
 def verify_problem(_id: str):
     _problem = Problem.objects.first_or_404(id=_id, activated=False)
     _problem.activate = True

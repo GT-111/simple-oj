@@ -5,7 +5,7 @@ from flask_login import login_required, login_user, logout_user, LoginManager, c
 from response import Response
 from extentions import login_manager, bcrypt
 from account.model import User
-from ..account import account
+from account import account_view
 
 
 def get_by_id(_id: str):
@@ -21,7 +21,7 @@ def user_loader(_id: str):
     return get_by_id(_id)
 
 
-@account.route('/information', methods=['POST'])
+@account_view.route('/information', methods=['POST'])
 @login_required
 def detail():
     username = request.json.get('username')
@@ -33,7 +33,7 @@ def detail():
     return r.to_json()
 
 
-@account.route('/login', method=['POST'])
+@account_view.route('/login', methods=['POST'])
 def login():
     username = request.json.get('username')
     password = request.json.get('password')
@@ -54,7 +54,7 @@ def login():
     return r.to_json()
 
 
-@account.route("/logout")
+@account_view.route("/logout")
 @login_required
 def logout():
     logout_user()
@@ -63,7 +63,7 @@ def logout():
     return r.to_json()
 
 
-@account.route("/register", method=['POST'])
+@account_view.route("/register", methods=['POST'])
 def register():
     username = request.json.get('username')
     password = generate_password_hash(request.json.get('password'))
