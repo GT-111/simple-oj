@@ -1,18 +1,16 @@
-import time, requests
+import time
 
-from flask import Flask, g, render_template, request
-
-from database import db
-from extentions import bcrypt, login_manager, mail
+from flask import Flask, g, request
 
 from account import account_view
+from database import sql
+from extentions import bcrypt, login_manager, mail
 from problem import problem_view
 from submit import submit_view
 
 
 def create_app():
-    """Returns an initialized Flask application."""
-    app = Flask('simple-oj')
+    app = Flask('Sandevistan')
     app.config['MONGODB_SETTINGS'] = {
         'db': 'sustc_oj',
         'host': 'localhost',
@@ -39,7 +37,7 @@ def create_app():
 
 
 def register_extensions(app):
-    db.init_app(app)
+    sql.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
     bcrypt.init_app(app)

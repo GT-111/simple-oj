@@ -1,20 +1,22 @@
-from flask import redirect, url_for, request, jsonify
-from flask_bcrypt import generate_password_hash
-from flask_login import login_required, login_user, logout_user, LoginManager
+from flask import request, jsonify
+from flask_login import login_required
 
-from response import Response
-from database import db
-from extentions import login_manager
 from auth import filter
-from problem.model import Problem
+from database import sql
 from problem import problem_view
+from problem.model import Problem
+from response import Response
+
+
+def get_by_id(_id: int):
+    return Problem.query.filter_by(id=_id)
 
 
 @problem_view.route('/')
 def problems_list():
-    page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 10))
-    problems = Problem.objects.paginate(page=page, per_page=limit)
+    _page = int(request.args.get('page', 1))
+    _per_page = int(request.args.get('limit', 10))
+    problems = Problem.query.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.message = jsonify([_problem.to_dict() for _problem in problems.items])
     r.status_code = 200
@@ -22,12 +24,16 @@ def problems_list():
 
 
 @problem_view.route('/<_id>')
-def problem_detail(_id: str):
-    _problem = Problem.objects.first_or_404(id=_id, activated=True)
+def problem_detail(id: int):
+    _problem: Problem = Problem.query.filter_by(id=id).first_or_404()
     r = Response()
-    r.message = jsonify(_problem)
-    r.status_code = 200
-    return r.to_json()
+    if _problem.competition_id != id:
+        r.message = jsonify(_problem)
+        r.status_code = 200
+        return r.to_json()
+    else:
+        r.status_code = 404
+        return r.to_json()
 
 
 @problem_view.route('/create', methods=['POST'])
@@ -35,19 +41,9 @@ def problem_detail(_id: str):
 @filter.level_required(2)
 def create_problem():
     content = request.get_json()
-    _problem = Problem(**content).save()
-    r = Response()
-    r.message = jsonify(_problem)
-    r.status_code = 200
-    return r.to_json()
-
-
-@problem_view.route('/verify/<id>')
-@login_required
-@filter.level_required(3)
-def verify_problem(_id: str):
-    _problem = Problem.objects.first_or_404(id=_id, activated=False)
-    _problem.activate = True
+    _problem = Problem(**content)
+    sql.session.add(_problem)
+    sql.session.commit()
     r = Response()
     r.message = jsonify(_problem)
     r.status_code = 200

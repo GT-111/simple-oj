@@ -1,23 +1,24 @@
-from flask import redirect, url_for, request, jsonify
+from flask import request, jsonify
 from flask_bcrypt import generate_password_hash
-from flask_login import login_required, login_user, logout_user, LoginManager, current_user
+from flask_login import login_required, login_user, logout_user, LoginManager
 
 from response import Response
 from extentions import login_manager, bcrypt
 from account.model import User
+from database import sql
 from account import account_view
 
 
-def get_by_id(_id: str):
-    return User.objects(id=_id)
+def get_by_id(_id: int):
+    return User.query.filter_by(id=_id)
 
 
 def get_by_name(_name: str):
-    return User.objects(username=_name)
+    return User.query.filter_by(username=_name)
 
 
 @login_manager.user_loader
-def user_loader(_id: str):
+def user_loader(_id: int):
     return get_by_id(_id)
 
 
@@ -37,9 +38,7 @@ def detail():
 def login():
     username = request.json.get('username')
     password = request.json.get('password')
-    # query user from db
     temp_user: User = get_by_name(username)
-    # validating
     r = Response()
     if temp_user is None or not bcrypt.check_password_hash(temp_user.password, password):
         r.message = 'no such user or wrong password'
@@ -70,8 +69,9 @@ def register():
     email = request.json.get('email')
     r = Response()
     try:
-        temp_user: User = User(username=username, password=password, email=email, type='user')
-        temp_user.save()
+        temp_user: User = User(username=username, nickname=username, password=password, email=email, level=1)
+        sql.session.add(temp_user)
+        sql.session.commit()
     except ValueError:
         r.message = 'illegal arguments'
         r.status_code = 406
