@@ -55,6 +55,9 @@ def create_problem():
         r.status_code = 406
         return r.to_json()
     problem_dict = problem_model.dict()
+    # print(content)
+    # print(problem_model)
+    # print(problem_dict)
     temp_problem: Problem = Problem(**problem_dict)
     sql.session.add(temp_problem)
     sql.session.commit()

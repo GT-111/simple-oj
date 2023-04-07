@@ -92,9 +92,20 @@ pip3 install -r requirements.txt
 
 ### 3. Submit (code)
 
-1.   
+1. create submit
+![submit1.png](pics%2Fsubmit1.png)
+2. get all submit histories
+![submit2.png](pics%2Fsubmit2.png)
+3. get submit histories of somebody
+![submit3.png](pics%2Fsubmit3.png)
+4. get submit histories of specific question
+5. get submit histories of specific question of somebody
 
+---
 
+### 4. Competition
+
+1. 
 
 
 

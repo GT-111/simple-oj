@@ -3,6 +3,7 @@ import time
 from flask import Flask, g, request
 
 from account import account_view
+from competition import competition_view
 from database import sql
 from extentions import bcrypt, login_manager, mail
 from problem import problem_view
@@ -43,7 +44,7 @@ def register_blueprints(app):
     app.register_blueprint(account_view, url_prefix='/account')
     app.register_blueprint(problem_view, url_prefix='/problem')
     app.register_blueprint(submit_view, url_prefix='/submit')
-
+    app.register_blueprint(competition_view, url_prefix='./competition')
 
 app = create_app()
 app.run()

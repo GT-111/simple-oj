@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from database import sql
 from converter import sql_datetime_to_datetime
@@ -13,6 +13,9 @@ class Submit(sql.Model):
         primary_key=True
     )
     problem_id = sql.Column(
+        sql.Integer
+    )
+    user_id = sql.Column(
         sql.Integer
     )
     create_time = sql.Column(
@@ -39,6 +42,7 @@ class Submit(sql.Model):
             "submit": {
                 "id": self.id,
                 "problem_id": self.problem_id,
+                "user_id": self.user_id,
                 "create_time": sql_datetime_to_datetime(self.create_time),
                 "code": self.code,
                 "status": self.status,
@@ -50,6 +54,7 @@ class Submit(sql.Model):
         return {
             "id": self.id,
             "problem_id": self.problem_id,
+            "user_id": self.user_id,
             "create_time": sql_datetime_to_datetime(self.create_time),
             "code": self.code,
             "status": self.status,
@@ -58,9 +63,14 @@ class Submit(sql.Model):
 
 
 class SubmitModel(BaseModel):
-    problem_id = str
-    create_time = datetime
-    code = str
+    problem_id: int
+    user_id: int
+    create_time: datetime
+    code: str
 
 
-
+if __name__ == '__main__':
+    test = {'problem_id': 1, "create_time": "1999-01-01 23:59:59", "code": "qwer"}
+    s = SubmitModel(**test)
+    print(test)
+    print(s)
