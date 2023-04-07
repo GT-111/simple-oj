@@ -1,10 +1,12 @@
+import datetime
+
 from flask import request, jsonify
 from flask_bcrypt import generate_password_hash
 from flask_login import login_required, login_user, logout_user, LoginManager
 
 from response import Response
 from extentions import login_manager, bcrypt
-from account.model import User
+from account.model import User, UserModel
 from database import sql
 from account import account_view
 
@@ -64,17 +66,18 @@ def logout():
 
 @account_view.route("/register", methods=['POST'])
 def register():
-    username = request.json.get('username')
-    password = generate_password_hash(request.json.get('password'))
-    email = request.json.get('email')
+    content = request.json()
     r = Response()
     try:
-        temp_user: User = User(username=username, nickname=username, password=password, email=email, level=1)
-        sql.session.add(temp_user)
-        sql.session.commit()
+        user_model = UserModel(**content, level=1, create_time=datetime.datetime.utcnow())
+        user_model.password = bcrypt.generate_password_hash(content.password)
     except ValueError:
         r.message = 'illegal arguments'
         r.status_code = 406
-        r.to_response()
+        return r.to_json()
+    temp_user: User = User(user_model)
+    sql.session.add(temp_user)
+    sql.session.commit()
     r.message = 'user have been created'
+    r.status_code = 200
     return r.to_json()

@@ -4,6 +4,7 @@ from database import sql
 
 
 class Competition(sql.Model):
+    __tablename__ = 'competition'
     id = sql.Column(sql.Integer, primary_key=True)
     title = sql.Column(sql.String(100))
     contributor = sql.Column(sql.String(100))

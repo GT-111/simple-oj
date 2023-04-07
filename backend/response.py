@@ -9,11 +9,11 @@ class Response(BaseModel):
     message: str = None
 
     def to_json(self):
-        return jsonify({
-            'data': self.data,
-            'status_code': self.status_code,
-            'message': self.message
-        })
+        return {
+            "data": self.data,
+            "status_code": self.status_code,
+            "message": self.message
+        }
 
     def to_response(self):
         response = make_response(self.to_json())
