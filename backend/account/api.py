@@ -12,7 +12,7 @@ from account import account_view
 
 
 def get_by_id(_id: int):
-    return User.query.filter_by(id=_id)
+    return User.query.filter_by(id=_id).items()
 
 
 def get_by_name(_name: str):

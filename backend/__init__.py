@@ -44,7 +44,7 @@ def register_blueprints(app):
     app.register_blueprint(account_view, url_prefix='/account')
     app.register_blueprint(problem_view, url_prefix='/problem')
     app.register_blueprint(submit_view, url_prefix='/submit')
-    app.register_blueprint(competition_view, url_prefix='./competition')
+    app.register_blueprint(competition_view, url_prefix='/')
 
 app = create_app()
 app.run()

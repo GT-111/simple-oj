@@ -84,6 +84,3 @@ def user_submit_histories():
     r.status_code = 200
     r.data = str([_submit.to_json_lite() for _submit in results.items])
     return r.to_json()
-
-
-
