@@ -104,9 +104,6 @@ pip3 install -r requirements.txt
 
 ---
 
-### 4. Competition
-
-1. 
 
 
 
