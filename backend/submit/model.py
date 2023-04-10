@@ -24,6 +24,9 @@ class Submit(sql.Model):
     code = sql.Column(
         sql.Text
     )
+    language = sql.Column(
+        sql.String(100)
+    )
     status = sql.Column(
         sql.String(100)
     )
@@ -45,6 +48,7 @@ class Submit(sql.Model):
                 "user_id": self.user_id,
                 "create_time": sql_datetime_to_datetime(self.create_time),
                 "code": self.code,
+                "language": self.language,
                 "status": self.status,
                 "returned": self.returned
             }
@@ -57,6 +61,7 @@ class Submit(sql.Model):
             "user_id": self.user_id,
             "create_time": sql_datetime_to_datetime(self.create_time),
             "code": self.code,
+            "language": self.language,
             "status": self.status,
             "returned": self.returned
         }
@@ -67,6 +72,7 @@ class SubmitModel(BaseModel):
     user_id: int
     create_time: datetime
     code: str
+    language: str
 
 
 if __name__ == '__main__':

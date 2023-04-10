@@ -21,9 +21,6 @@ def submit():
         return r.to_json()
     submit_dict = submit_model.dict()
     temp_submit = Submit(**submit_dict)
-    # print(content)
-    # print(submit_model)
-    # print(submit_dict)
     sql.session.add(temp_submit)
     sql.session.commit()
     r.status_code = 200

@@ -41,6 +41,7 @@ create table if not exists oj.submit
     user_id     int,
     create_time datetime,
     code        text,
+    language    varchar(100),
     status      varchar(100),
     returned    text
 );
@@ -75,10 +76,11 @@ drop table if exists oj.private_submit;
 create table if not exists oj.private_submit
 (
     id          bigint unsigned auto_increment primary key,
-    problem_id  int,
+    private_problem_id  int,
     user_id     int,
     create_time datetime,
     code        text,
+    language    varchar(100),
     status      varchar(100),
     returned    text
 );
