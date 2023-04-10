@@ -83,7 +83,7 @@ pip3 install -r requirements.txt
    tag: 预留标签
 
 1. get all problems
-   <img src="pics/problem1.png" style="zoom:50%;" />
+   <img src="./pics/problem1.png" style="zoom:50%;" />
 2. get single problem
    <img src="pics/problem2.png" style="zoom:50%;" />
 3. create problem
@@ -103,7 +103,6 @@ pip3 install -r requirements.txt
 5. get submit histories of specific question of somebody
 
 ---
-
 
 
 

@@ -1,6 +1,7 @@
 import time
 
 from flask import Flask, g, request
+from flask import CORS
 
 from account import account_view
 from competition import competition_view
@@ -13,6 +14,7 @@ from submit import submit_view
 def create_app():
     app = Flask('sandevistan')
     app.config.from_object("config.Config")
+    cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
     register_extensions(app)
     register_blueprints(app)

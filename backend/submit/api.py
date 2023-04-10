@@ -59,7 +59,7 @@ def user_submit_histories():
 
 @submit_view.route('/histories/problem')
 # @login_required
-def user_submit_histories():
+def problem_submit_histories():
     _id = int(request.args.get('id'))
     _page = int(request.args.get('page', 1))
     _per_page = int(request.args.get('limit', 10))
@@ -73,7 +73,7 @@ def user_submit_histories():
 
 @submit_view.route('/histories/user/problem')
 # @login_required
-def user_submit_histories():
+def user_problem_submit_histories():
     _user_id = int(request.args.get('user_id'))
     _problem_id = int(request.args.get('problem_id'))
     _page = int(request.args.get('page', 1))
