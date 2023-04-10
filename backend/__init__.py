@@ -1,7 +1,7 @@
 import time
 
 from flask import Flask, g, request
-from flask import CORS
+from flask_cors import CORS
 
 from account import account_view
 from competition import competition_view
