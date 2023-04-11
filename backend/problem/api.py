@@ -1,3 +1,5 @@
+import json
+
 from flask import request
 from flask_login import login_required
 
@@ -27,7 +29,7 @@ def problems_list():
     _per_page = int(request.args.get('limit', 10))
     problems = Problem.query.paginate(page=_page, per_page=_per_page)
     r = Response()
-    r.data = str([_problem.to_json_lite() for _problem in problems.items])
+    r.data = [json.dumps(_problem.to_json_lite()) for _problem in problems.items]
     r.status_code = 200
     return r.to_json()
 

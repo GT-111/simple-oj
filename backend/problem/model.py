@@ -73,6 +73,7 @@ class ProblemModel(BaseModel):
     start_time: datetime
     time_limit: int
     content: str
+    tag: str
 
     @validator('title')
     def title_validator(cls, name):

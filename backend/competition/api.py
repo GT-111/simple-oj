@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from flask import request
@@ -34,7 +35,7 @@ def competition_list():
     _per_page = int(request.args.get('limit', 10))
     competitions = Competition.query.paginate(page=_page, per_page=_per_page)
     r = Response()
-    r.data = str([_competition.to_json_lite() for _competition in competitions.items])
+    r.data = [json.dumps(_competition.to_json_lite()) for _competition in competitions.items]
     r.status_code = 200
     return r.to_json()
 
@@ -98,7 +99,7 @@ def user_enroll_detail():
     results = enrolls.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.status_code = 200
-    r.data = str([_enroll.to_json_lite() for _enroll in results.items])
+    r.data = [json.dumps(_enroll.to_json_lite()) for _enroll in results.items]
     return r.to_json()
 
 
@@ -111,7 +112,7 @@ def user_problem_enroll_detail():
     results = enrolls.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.status_code = 200
-    r.data = str([_enroll.to_json_lite() for _enroll in results.items])
+    r.data = [json.dumps(_enroll.to_json_lite()) for _enroll in results.items]
     return r.to_json()
 
 

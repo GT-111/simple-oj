@@ -14,7 +14,6 @@ from submit import submit_view
 def create_app():
     app = Flask('sandevistan')
     app.config.from_object("config.Config")
-    cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
     register_extensions(app)
     register_blueprints(app)

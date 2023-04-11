@@ -76,7 +76,8 @@ class SubmitModel(BaseModel):
 
 
 if __name__ == '__main__':
-    test = {'problem_id': 1, "create_time": "1999-01-01 23:59:59", "code": "qwer"}
-    s = SubmitModel(**test)
+    test = {'id': 1, 'problem_id': 1, 'user_id': 1, "create_time": "1999-01-01T23:59:59", "code": "qwer",
+            "status": "1234", "language": "java", "returned": "asdf"}
+    s = Submit(**test)
     print(test)
-    print(s)
+    print(s.to_json())
