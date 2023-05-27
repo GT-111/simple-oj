@@ -18,9 +18,6 @@ class Problem(sql.Model):
     contributor = sql.Column(
         sql.String(100)
     )
-    start_time = sql.Column(
-        sql.DateTime
-    )
     time_limit = sql.Column(
         sql.Integer
     )
@@ -30,9 +27,20 @@ class Problem(sql.Model):
     status = sql.Column(
         sql.Text
     )
-    tag = sql.Column(
+    oss_id = sql.Column(
+        sql.Integer
+    )
+    year = sql.Column(
         sql.Text
     )
+    difficulty = sql.Column(
+        sql.Text
+    )
+    derivation = sql.Column(
+        sql.Text
+    )
+
+
 
     def __init__(self, **kwargs):
         super(Problem, self).__init__(**kwargs)
@@ -46,11 +54,13 @@ class Problem(sql.Model):
                 "id": self.id,
                 "title": self.title,
                 "contributor": self.contributor,
-                "start_time": sql_datetime_to_datetime(self.start_time).isoformat(),
                 "time_limit": self.time_limit,
                 "content": self.content,
                 "status": self.status,
-                "tag": self.tag
+                "oss_id": self.oss_id,
+                "year": self.year,
+                "difficulty": self.difficulty,
+                "derivation": self.derivation
             }
         }
 
@@ -59,21 +69,24 @@ class Problem(sql.Model):
             "id": self.id,
             "title": self.title,
             "contributor": self.contributor,
-            "start_time": sql_datetime_to_datetime(self.start_time).isoformat(),
             "time_limit": self.time_limit,
             "content": self.content,
             "status": self.status,
-            "tag": self.tag
+            "oss_id": self.oss_id,
+            "year": self.year,
+            "difficulty": self.difficulty,
+            "derivation": self.derivation
         }
 
 
 class ProblemModel(BaseModel):
     title: str
     contributor: str
-    start_time: datetime
     time_limit: int
     content: str
-    tag: str
+    year: str
+    difficulty: str
+    derivation: str
 
     @validator('title')
     def title_validator(cls, name):

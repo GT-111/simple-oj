@@ -44,7 +44,7 @@ class User(UserMixin, sql.Model):
         return '<User %s: %s@%s>' % (self.username, self.nickname, self.level)
 
     def set_password(self, password):
-        _hash = bcrypt.generate_password_hash(password, method='sha256').decode('utf-8')
+        _hash = bcrypt.generate_password_hash(password).decode('utf-8')
         self.password = _hash
 
     def to_json(self):
@@ -107,7 +107,10 @@ class TestModel(BaseModel):
 
 
 if __name__ == '__main__':
-    user_input = {"username": "t1234", "nickname": "test", "password": "*^%&^$^&#", "size": 10,
+    user_input = {"username": "t1234",
+                  "nickname": "test",
+                  "password": "*^%&^$^&#",
+                  "size": 10,
                   "time": "1970-01-01T23:59:59"}
     user = TestModel(**user_input)
     print(user.__dict__)

@@ -3,6 +3,7 @@ import datetime
 from flask import request, jsonify
 from flask_bcrypt import generate_password_hash
 from flask_login import login_required, login_user, logout_user, LoginManager
+from sqlalchemy import select
 
 from response import Response
 from extentions import login_manager, bcrypt
@@ -12,11 +13,15 @@ from account import account_view
 
 
 def get_by_id(_id: int):
-    return User.query.filter_by(id=_id).items()
+    user = sql.session.execute(select(User).where(User.id == _id))
+    return user.fetchone()[0]
+    # return User.query.filter_by(id=_id).items()
 
 
 def get_by_name(_name: str):
-    return User.query.filter_by(username=_name)
+    user = sql.session.execute(select(User).where(User.username == _name))
+    return user.fetchone()[0]
+    # return User.query.filter_by(username=_name)
 
 
 @login_manager.user_loader
@@ -66,11 +71,11 @@ def logout():
 
 @account_view.route("/register", methods=['POST'])
 def register():
-    content = request.json()
+    content = request.get_json()
     r = Response()
     try:
         user_model = UserModel(**content, level=1, create_time=datetime.datetime.utcnow())
-        user_model.password = bcrypt.generate_password_hash(content.password)
+        user_model.password = bcrypt.generate_password_hash(content['password'])
     except ValueError:
         r.message = 'illegal arguments'
         r.status_code = 406

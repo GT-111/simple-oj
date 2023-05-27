@@ -1,7 +1,19 @@
+import redis
+
+
 class Config:
-    # General
-    SECRET_KEY = 'sandevistan'
+    #General
     FLASK_ENV = 'debug'
+
+    # Session and Redis
+    # redis://:[password]@[host_url]:[port].
+    # SECRET_KEY = 'sandevistan'
+    # REDIS_URI = 'redis://:admin@localhost:6379'
+    # SESSION_TYPE = 'redis'
+    # SESSION_REDIS = redis.from_url(REDIS_URI)
+
+
+
 
     # MongoDB
     MONGODB_SETTINGS = {
