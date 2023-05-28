@@ -87,15 +87,3 @@ class ProblemModel(BaseModel):
     year: str
     difficulty: str
     derivation: str
-
-    @validator('title')
-    def title_validator(cls, name):
-        if len(name) > 100 or len(name) == 0:
-            raise ValueError("invalid title length")
-        return name
-
-    @validator('time_limit')
-    def contributor_validator(cls, time):
-        if time > 10 or time <= 0:
-            raise ValueError("invalid time_limit")
-        return time

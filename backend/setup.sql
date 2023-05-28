@@ -72,16 +72,16 @@ create table if not exists oj.event
         unique (id)
 );
 
-drop table if exists oj.enroll;
-create table if not exists oj.enroll
+drop table if exists oj.enrollment;
+create table if not exists oj.enrollment
 (
     id       bigint unsigned auto_increment primary key,
     event_id int,
     user_id  int
 );
 
-drop table if exists oj.contains;
-create table if not exists oj.contains
+drop table if exists oj.containing;
+create table if not exists oj.containing
 (
     id         bigint unsigned auto_increment primary key,
     serial     int,
@@ -153,3 +153,5 @@ create table if not exists oj.private_submit
     status             varchar(100),
     returned           text
 );
+
+

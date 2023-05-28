@@ -32,6 +32,11 @@ def get_assignment_by_contributor_id(_id: int):
 def get_competition_enrollment_by_id(_id: int):
     enrollments = sql.session.execute(select(Enrollment).where(Enrollment.user_id == _id))
     # for enrollment in enrollments.fetchall():
+    #     if enrollment.type == ''
+    #
+    # r = Response()
+    # r.data = []
+
     return 0
 
 
