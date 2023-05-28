@@ -27,8 +27,8 @@ import zmq
 
 context = zmq.Context()
 socket = context.socket(zmq.PUSH)
-socket.bind("tcp://*:5555")
-socket.send_string('test-send')
+socket.bind("tcp://*:5554")
+# socket.send_string('test-send')
 
 result_state = dict()
 result_state[0] = 'ACCEPTED'
