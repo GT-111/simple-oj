@@ -84,6 +84,6 @@ class ProblemModel(BaseModel):
     contributor: str
     time_limit: int
     content: str
-    year: str
+    year: int
     difficulty: str
     derivation: str
