@@ -84,7 +84,7 @@ def upload_zip():
     f = request.files.get('file')
     if f.filename != '':
         print(f.filename)
-        serial = get_max_id_plus1()
+        serial = str(get_max_id_plus1()) + '.zip'
         bucket.put_object(serial, f)
         r.status_code = 200
         oss_model = OssModel(user_id=-1, type='zip')
