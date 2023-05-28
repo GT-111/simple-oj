@@ -81,7 +81,6 @@ class Problem(sql.Model):
 
 class ProblemModel(BaseModel):
     title: str
-    contributor: str
     time_limit: int
     content: str
     year: int
