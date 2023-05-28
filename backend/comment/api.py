@@ -19,7 +19,7 @@ def get_details_by_id(_id: int):
     return details
 
 
-@comment_view.route('/')
+@comment_view.route('/comment')
 def get_comments():
     _page = int(request.args.get('page', 1))
     _per_page = int(request.args.get('limit', 10))

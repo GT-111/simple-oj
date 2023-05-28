@@ -13,6 +13,13 @@ from problem.model import Problem, ProblemModel
 from response import Response
 
 
+def get_max_id():
+    max_id_problem = Problem.query.order_by(Problem.id.desc()).first()
+    if max_id_problem:
+        return max_id_problem.id
+    else:
+        return 1
+
 def get_by_id(_id: int):
     problem = sql.session.execute(select(Problem).where(Problem.id == _id))
     return problem.fetchone()[0]
@@ -63,6 +70,7 @@ def create_problem():
     temp_problem: Problem = Problem(**problem_dict)
     sql.session.add(temp_problem)
     sql.session.commit()
+    temp_problem.id = get_max_id()
     r.data = temp_problem.to_json()
     r.status_code = 200
     return r.to_json()
