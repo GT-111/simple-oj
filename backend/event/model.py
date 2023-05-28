@@ -71,8 +71,8 @@ class EventModel(BaseModel):
     description: str
 
 
-class Enroll(sql.Model):
-    __tablename__ = 'enroll'
+class Enrollment(sql.Model):
+    __tablename__ = 'enrollment'
     id = sql.Column(
         sql.Integer,
         primary_key=True
@@ -85,7 +85,7 @@ class Enroll(sql.Model):
     )
 
     def __init__(self, **kwargs):
-        super(Enroll, self).__init__(**kwargs)
+        super(Enrollment, self).__init__(**kwargs)
 
     def to_json(self):
         return {
@@ -104,13 +104,13 @@ class Enroll(sql.Model):
         }
 
 
-class EnrollModel(BaseModel):
+class EnrollmentModel(BaseModel):
     event_id: int
     user_id: int
 
 
-class Contains(sql.Model):
-    __tablename__ = 'contains'
+class Containing(sql.Model):
+    __tablename__ = 'containing'
     id = sql.Column(
         sql.Integer,
         primary_key=True
@@ -126,11 +126,11 @@ class Contains(sql.Model):
     )
 
     def __init__(self, **kwargs):
-        super(Contains, self).__init__(**kwargs)
+        super(Containing, self).__init__(**kwargs)
 
     def to_json(self):
         return {
-            "contains": {
+            "containing": {
                 "id": self.id,
                 "serial": self.serial,
                 "event_id": self.event_id,
@@ -147,7 +147,7 @@ class Contains(sql.Model):
         }
 
 
-class ContainsModel(BaseModel):
+class ContainingModel(BaseModel):
     serial: int
     event_id: int
     problem_id: int

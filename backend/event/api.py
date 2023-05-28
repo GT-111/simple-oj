@@ -10,7 +10,7 @@ from response import Response
 from extentions import login_manager, bcrypt
 from database import sql
 from account.model import User
-from event.model import Event, EventModel, Enroll, EnrollModel, Contains, ContainsModel
+from event.model import Event, EventModel, Enrollment, EnrollmentModel, Containing, ContainingModel
 from event import event_view
 
 
@@ -29,12 +29,14 @@ def get_assignment_by_contributor_id(_id: int):
     return assignment.fetchall()
 
 
-def get_competition_enroll_by_id(_id: int):
-    enrolls = sql.session.execute(select(Enroll).where(Enroll.user_id == _id))
-    # for enroll in enrolls.fetchall():
+def get_competition_enrollment_by_id(_id: int):
+    enrollments = sql.session.execute(select(Enrollment).where(Enrollment.user_id == _id))
+    # for enrollment in enrollments.fetchall():
     return 0
 
-def get_assignment_enroll_by_id(_id: int):
+
+def get_assignment_enrollment_by_id(_id: int):
+
     return 0
 
 

@@ -7,11 +7,13 @@ create table if not exists oj.problem
         primary key,
     title       varchar(100),
     contributor varchar(100),
-    start_time  datetime,
     time_limit  int,
     content     text,
     status      text,
-    tag         text,
+    oss_id      int,
+    year        text,
+    difficulty  text,
+    derivation  text,
     constraint id unique (id)
 );
 
@@ -32,6 +34,64 @@ create table if not exists oj.user
         unique (username)
 );
 
+drop table if exists oj.user_upload;
+create table if not exists oj.user_upload
+(
+    id         bigint unsigned auto_increment
+        primary key,
+    user_id    int,
+    context_id int,
+    oss_id     int,
+    grade      int,
+    comment    text,
+    constraint id
+        unique (id)
+);
+
+drop table if exists oj.oss;
+create table if not exists oj.oss
+(
+    id      bigint unsigned auto_increment
+        primary key,
+    user_id int,
+    type    text
+);
+
+drop table if exists oj.event;
+create table if not exists oj.event
+(
+    id             bigint unsigned auto_increment
+        primary key,
+    title          varchar(100),
+    contributor_id int,
+    type           text, # assignment / competition
+    start_at       datetime,
+    due_at         datetime,
+    description    text,
+    constraint id
+        unique (id)
+);
+
+drop table if exists oj.enroll;
+create table if not exists oj.enroll
+(
+    id       bigint unsigned auto_increment primary key,
+    event_id int,
+    user_id  int
+);
+
+drop table if exists oj.contains;
+create table if not exists oj.contains
+(
+    id         bigint unsigned auto_increment primary key,
+    serial     int,
+    event_id   int,
+    problem_id int
+);
+
+
+################ check ################
+
 drop table if exists oj.submit;
 create table if not exists oj.submit
 (
@@ -43,7 +103,26 @@ create table if not exists oj.submit
     code        text,
     language    varchar(100),
     status      varchar(100),
-    returned    text
+    returned    text,
+    constraint id
+        unique (id)
+);
+
+
+
+drop table if exists oj.private_problem;
+create table if not exists oj.private_problem
+(
+    id          bigint unsigned auto_increment
+        primary key,
+    title       varchar(100),
+    contributor varchar(100),
+    time_limit  int,
+    content     text,
+    year        text,
+    difficulty  text,
+    derivation  text,
+    constraint id unique (id)
 );
 
 drop table if exists oj.competition;
@@ -56,42 +135,21 @@ create table if not exists oj.competition
     create_at   datetime,
     start_at    datetime,
     due_at      datetime,
+    type        text,
     description text,
     constraint id
         unique (id)
 );
 
-drop table if exists oj.private_problem;
-create table if not exists oj.private_problem
-(
-    id         bigint unsigned auto_increment
-        primary key,
-    title      varchar(100),
-    time_limit int,
-    content    text,
-    tag        text
-);
-
 drop table if exists oj.private_submit;
 create table if not exists oj.private_submit
 (
-    id          bigint unsigned auto_increment primary key,
-    private_problem_id  int,
-    user_id     int,
-    create_time datetime,
-    code        text,
-    language    varchar(100),
-    status      varchar(100),
-    returned    text
+    id                 bigint unsigned auto_increment primary key,
+    private_problem_id int,
+    user_id            int,
+    create_time        datetime,
+    code               text,
+    language           varchar(100),
+    status             varchar(100),
+    returned           text
 );
-
-
-drop table if exists oj.enroll;
-create table if not exists oj.enroll
-(
-    id             bigint unsigned auto_increment primary key,
-    competition_id int,
-    user_id        int,
-    join_time      datetime
-);
-

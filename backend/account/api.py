@@ -75,12 +75,14 @@ def register():
     r = Response()
     try:
         user_model = UserModel(**content, level=1, create_time=datetime.datetime.utcnow())
-        user_model.password = bcrypt.generate_password_hash(content['password'])
+        print(user_model.password)
+        user_model.password = bcrypt.generate_password_hash(content['password']).decode('utf-8')
     except ValueError:
         r.message = 'illegal arguments'
         r.status_code = 406
         return r.to_json()
-    temp_user: User = User(user_model)
+    user_dict = user_model.dict()
+    temp_user: User = User(**user_dict)
     sql.session.add(temp_user)
     sql.session.commit()
     r.message = 'user have been created'
