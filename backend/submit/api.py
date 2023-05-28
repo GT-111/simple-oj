@@ -3,6 +3,7 @@ import datetime
 
 from flask import request, jsonify
 from flask_login import login_required, current_user
+from sqlalchemy import select
 
 from response import Response
 from database import sql
@@ -10,11 +11,49 @@ from extentions import login_manager, bcrypt
 from submit.model import Submit, SubmitModel
 from submit import submit_view
 
+
+def get_submit_by_id(_id: int):
+    submit = sql.session.execute(select(Submit).where(Submit.id == _id))
+    return submit.fetchone()[0]
+
+# >>> judger >>> #
 import zmq
 
 context = zmq.Context()
 socket = context.socket(zmq.PUSH)
-socket.bind("tcp://*:5558")
+socket.bind("tcp://*:5555")
+
+result_state = dict()
+result_state[0] = 'ACCEPTED'
+result_state[-1] = 'WRONG_ANSWER'
+result_state[1] = 'TIME_LIMIT_EXCEEDED'
+result_state[2] = 'TIME_LIMIT_EXCEEDED'
+result_state[3] = 'MEMORY_LIMIT_EXCEEDED'
+result_state[4] = 'RUNTIME_ERROR'
+result_state[5] = 'SYSTEM_ERROR'
+result_state[6] = 'COMPILE_ERROR'
+
+@submit_view.route('/judger/code', methods=['POST'])
+def require():
+    content = request.get_json()
+    record = get_submit_by_id(content.get('task_id'))
+    return record.code
+
+
+@submit_view.route('/judger/result', methods=['POST'])
+def result():
+    content = request.get_json()
+    # data = {
+    #     "task_id": task_id,
+    #     "code": state_code,
+    #     "detail": detail
+    # }
+    print(content.get('task_id'))
+    print(content.get('state_code'))
+    print(content.get('detail'))
+    return 'ok'
+
+# <<< judger <<< #
 
 
 @submit_view.route('/submit', methods=['POST'])
