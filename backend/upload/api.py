@@ -99,7 +99,7 @@ def upload_zip():
     else:
         r.message = 'no file uploaded'
         r.status_code = 400
-    return serial_num
+    return str(serial_num)
 
 
 @upload_view.route('/upload_assignment', methods=['POST'])
@@ -123,4 +123,4 @@ def upload_assignment():
     else:
         r.message = 'no file uploaded'
         r.status_code = 400
-    return serial_num
+    return str(serial_num)
