@@ -30,18 +30,41 @@ def get_assignment_by_contributor_id(_id: int):
 
 
 def get_competition_enrollment_by_id(_id: int):
-    enrollments = sql.session.execute(select(Enrollment).where(Enrollment.user_id == _id))
-    # for enrollment in enrollments.fetchall():
-    #     if enrollment.type == ''
-    #
-    # r = Response()
-    # r.data = []
-
-    return 0
+    enrollments = sql.session.query(Enrollment).filter(Enrollment.user_id == _id)
+    results = []
+    for enrollment in enrollments.all():
+        temp_event: Event = get_event_by_id(enrollment.event_id)
+        if temp_event.type == 'competition':
+            results.append(temp_event)
+    return [_event.to_json_lite() for _event in results]
 
 
 def get_assignment_enrollment_by_id(_id: int):
+    enrollments = sql.session.query(Enrollment).filter(Enrollment.user_id == _id)
+    results = []
+    for enrollment in enrollments.all():
+        temp_event: Event = get_event_by_id(enrollment.event_id)
+        if temp_event.type == 'assignment':
+            results.append(temp_event)
+    return [_event.to_json_lite() for _event in results]
 
-    return 0
+
+@event_view.route('/assignment_id', methods=['POST'])
+def get_assignment_id():
+    content = request.get_json()
+    r = Response()
+    r.status_code = 200
+    r.data = get_assignment_enrollment_by_id(content.get('user_id'))
+    return r.to_json()
+
+
+@event_view.route('/competition_id', methods=['POST'])
+def get_competition_id():
+    content = request.get_json()
+    r = Response()
+    r.status_code = 200
+    r.data = get_competition_enrollment_by_id(content.get('user_id'))
+    return r.to_json()
+
 
 

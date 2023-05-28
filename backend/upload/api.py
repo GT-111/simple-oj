@@ -35,6 +35,7 @@ def get_oss_by_id(_id: int):
     oss = sql.session.execute(select(Oss).where(Oss.id == _id))
     return oss.fetchone()[0]
 
+
 def get_problem_by_id(_id: int):
     problem = sql.session.execute(select(Problem).where(Problem.id == _id))
     return problem.fetchone()[0]
@@ -119,4 +120,3 @@ def upload_assignment():
         r.message = 'no file uploaded'
         r.status_code = 400
     return r.to_json()
-

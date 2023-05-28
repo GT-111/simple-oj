@@ -35,7 +35,7 @@ def competition_list():
     _per_page = int(request.args.get('limit', 10))
     competitions = Competition.query.paginate(page=_page, per_page=_per_page)
     r = Response()
-    r.data = [json.dumps(_competition.to_json_lite()) for _competition in competitions.items]
+    r.data = [_competition.to_json_lite() for _competition in competitions.items]
     r.status_code = 200
     return r.to_json()
 

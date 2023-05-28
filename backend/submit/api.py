@@ -38,7 +38,7 @@ def submit_histories():
     submits = Submit.query.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.status_code = 200
-    r.data = [json.dumps(_submit.to_json_lite()) for _submit in submits.items]
+    r.data = [_submit.to_json_lite() for _submit in submits.items]
     return r.to_json()
 
 
@@ -52,7 +52,7 @@ def user_submit_histories():
     results = submits.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.status_code = 200
-    r.data = [json.dumps(_submit.to_json_lite()) for _submit in results.items]
+    r.data = [_submit.to_json_lite() for _submit in results.items]
     return r.to_json()
 
 
@@ -66,7 +66,7 @@ def problem_submit_histories():
     results = submits.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.status_code = 200
-    r.data = [json.dumps(_submit.to_json_lite()) for _submit in results.items]
+    r.data = [_submit.to_json_lite() for _submit in results.items]
     return r.to_json()
 
 
@@ -81,5 +81,5 @@ def user_problem_submit_histories():
     results = submits.paginate(page=_page, per_page=_per_page)
     r = Response()
     r.status_code = 200
-    r.data = [json.dumps(_submit.to_json_lite()) for _submit in results.items]
+    r.data = [_submit.to_json_lite() for _submit in results.items]
     return r.to_json()
