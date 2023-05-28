@@ -11,6 +11,12 @@ from extentions import login_manager, bcrypt
 from submit.model import Submit, SubmitModel
 from submit import submit_view
 
+def get_max_id():
+    max_id_submit = Submit.query.order_by(Submit.id.desc()).first()
+    if max_id_submit:
+        return max_id_submit.id
+    else:
+        return 1
 
 def get_submit_by_id(_id: int):
     submit = sql.session.execute(select(Submit).where(Submit.id == _id))
@@ -22,6 +28,7 @@ import zmq
 context = zmq.Context()
 socket = context.socket(zmq.PUSH)
 socket.bind("tcp://*:5555")
+socket.send_string('test-send')
 
 result_state = dict()
 result_state[0] = 'ACCEPTED'
@@ -32,6 +39,7 @@ result_state[3] = 'MEMORY_LIMIT_EXCEEDED'
 result_state[4] = 'RUNTIME_ERROR'
 result_state[5] = 'SYSTEM_ERROR'
 result_state[6] = 'COMPILE_ERROR'
+
 
 @submit_view.route('/judger/code', methods=['POST'])
 def require():
@@ -49,7 +57,7 @@ def result():
     #     "detail": detail
     # }
     print(content.get('task_id'))
-    print(content.get('state_code'))
+    print(content.get('code'))
     print(content.get('detail'))
     return 'ok'
 
@@ -75,7 +83,10 @@ def submit():
     r.data = temp_submit.to_json()
 
     # >>> message queue >>> #
-    socket.send_string(input("input:"))
+    task_id = get_max_id()
+    problem_id = submit_model.problem_id
+    ret = "{" + "task_id: " + str(task_id) + ", problem_id: " + str(problem_id) + "}"
+    socket.send_string(ret)
     # >>> message queue >>> #
 
     return r.to_json()

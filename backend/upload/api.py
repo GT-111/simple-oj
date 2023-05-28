@@ -82,6 +82,7 @@ def zip():
 def upload_zip():
     r = Response()
     f = request.files.get('file')
+    serial_num = 0
     if f.filename != '':
         print(f.filename)
         serial_num = get_max_id_plus1()
@@ -98,16 +99,18 @@ def upload_zip():
     else:
         r.message = 'no file uploaded'
         r.status_code = 400
-    return r.to_json()
+    return serial_num
 
 
 @upload_view.route('/upload_assignment', methods=['POST'])
 def upload_assignment():
     r = Response()
     f = request.files.get('file')
+    serial_num = 0
     if f.filename != '':
         print(f.filename)
-        serial = str(get_max_id_plus1())
+        serial_num = get_max_id_plus1()
+        serial = str(serial_num) + '.zip'
         bucket.put_object(serial, f)
         r.status_code = 200
         oss_model = OssModel(user_id=-1, type='assignment')
@@ -120,4 +123,4 @@ def upload_assignment():
     else:
         r.message = 'no file uploaded'
         r.status_code = 400
-    return r.to_json()
+    return serial_num
