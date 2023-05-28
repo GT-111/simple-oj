@@ -73,4 +73,4 @@ def create_problem():
     temp_problem.id = get_max_id()
     r.data = temp_problem.to_json()
     r.status_code = 200
-    return temp_problem.id
+    return str(temp_problem.id)
