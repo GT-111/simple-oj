@@ -67,4 +67,23 @@ def get_competition_id():
     return r.to_json()
 
 
+@event_view.route('/competition', methods=['POST'])
+def get_competitions():
+    content = request.get_json()
+    r = Response()
+    r.status_code = 200
+    temp_events = get_competition_by_contributor_id(content.get('user_id'))
+    r.data = [_event.to_json_lite() for _event in temp_events]
+    return r.to_json()
+
+
+@event_view.route('/assignment', methods=['POST'])
+def get_assignments():
+    content = request.get_json()
+    r = Response()
+    r.status_code = 200
+    temp_events = get_assignment_by_contributor_id(content.get('user_id'))
+    r.data = [_event.to_json_lite() for _event in temp_events]
+    return r.to_json()
+
 

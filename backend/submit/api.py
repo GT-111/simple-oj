@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from flask import request, jsonify
 from flask_login import login_required, current_user
@@ -9,14 +10,20 @@ from extentions import login_manager, bcrypt
 from submit.model import Submit, SubmitModel
 from submit import submit_view
 
+import zmq
 
-@submit_view.route('/', methods=['POST'])
+context = zmq.Context()
+socket = context.socket(zmq.PUSH)
+socket.bind("tcp://*:5558")
+
+
+@submit_view.route('/submit', methods=['POST'])
 # @login_required
 def submit():
     content = request.get_json()
     r = Response()
     try:
-        submit_model = SubmitModel(**content)
+        submit_model = SubmitModel(**content, create_time=datetime.datetime.utcnow())
     except ValueError:
         r.message = 'invalid param'
         r.status_code = 406
@@ -27,6 +34,11 @@ def submit():
     sql.session.commit()
     r.status_code = 200
     r.data = temp_submit.to_json()
+
+    # >>> message queue >>> #
+    socket.send_string(input("input:"))
+    # >>> message queue >>> #
+
     return r.to_json()
 
 
