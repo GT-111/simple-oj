@@ -54,7 +54,7 @@ def register_blueprints(app):
 
 
 app = create_app()
-app.run()
+app.run(host='0.0.0.0', port=5001)
 
 
 # def register_errorhandlers(app):

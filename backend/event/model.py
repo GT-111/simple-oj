@@ -15,9 +15,6 @@ class Event(sql.Model):
     title = sql.Column(
         sql.String(100)
     )
-    contributor_id = sql.Column(
-        sql.Integer
-    )
     type = sql.Column(
         sql.Text
     )
@@ -42,7 +39,6 @@ class Event(sql.Model):
             "event": {
                 "id": self.id,
                 "title": self.title,
-                "contributor_id": self.contributor_id,
                 "type": self.type,
                 "start_at": sql_datetime_to_datetime(self.start_at).isoformat(),
                 "due_at": sql_datetime_to_datetime(self.due_at).isoformat(),
@@ -54,7 +50,6 @@ class Event(sql.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "contributor_id": self.contributor_id,
             "type": self.type,
             "start_at": sql_datetime_to_datetime(self.start_at).isoformat(),
             "due_at": sql_datetime_to_datetime(self.due_at).isoformat(),
@@ -64,7 +59,6 @@ class Event(sql.Model):
 
 class EventModel(BaseModel):
     title: str
-    contributor_id: int
     type: str
     start_at: datetime
     due_at: datetime

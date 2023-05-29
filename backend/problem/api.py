@@ -71,6 +71,4 @@ def create_problem():
     sql.session.add(temp_problem)
     sql.session.commit()
     temp_problem.id = get_max_id()
-    r.data = temp_problem.to_json()
-    r.status_code = 200
     return str(temp_problem.id)

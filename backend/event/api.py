@@ -14,6 +14,22 @@ from event.model import Event, EventModel, Enrollment, EnrollmentModel, Containi
 from event import event_view
 
 
+def get_max_assignment_id():
+    max_id_assignment = Event.query.filter_by(type == 'assignment').order_by(Event.id.desc()).first()
+    if max_id_assignment:
+        return max_id_assignment.id
+    else:
+        return 1
+
+
+def get_max_competition_id():
+    max_id_competition = Event.query.filter_by(type == 'competition').order_by(Event.id.desc()).first()
+    if max_id_competition:
+        return max_id_competition.id
+    else:
+        return 1
+
+
 def get_event_by_id(_id: int):
     event = sql.session.execute(select(Event).where(Event.id == _id))
     return event.fetchone()[0]
@@ -87,3 +103,37 @@ def get_assignments():
     return r.to_json()
 
 
+@event_view.route('/create_assignment', methods=['POST'])
+def create_assignment():
+    content = request.get_json()
+    r = Response()
+    try:
+        event_model = EventModel(**content, type='assignment')
+    except ValueError:
+        r.message = 'invalid param'
+        r.status_code = 406
+        return r.to_json()
+    event_dict = event_model.dict()
+    temp_assignment: Event = Event(**event_dict)
+    sql.session.add(temp_assignment)
+    sql.session.commit()
+    temp_assignment.id = get_max_assignment_id()
+    return str(temp_assignment.id)
+
+
+@event_view.route('/create_competition', methods=['POST'])
+def create_competition():
+    content = request.get_json()
+    r = Response()
+    try:
+        event_model = EventModel(**content, type='competition')
+    except ValueError:
+        r.message = 'invalid param'
+        r.status_code = 406
+        return r.to_json()
+    event_dict = event_model.dict()
+    temp_competition: Event = Event(**event_dict)
+    sql.session.add(temp_competition)
+    sql.session.commit()
+    temp_competition.id = get_max_competition_id()
+    return str(temp_competition.id)
