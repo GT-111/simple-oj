@@ -13,9 +13,24 @@ from account.model import User
 from comment.model import Floor, FloorModel, Comment, CommentModel
 from comment import comment_view
 
+def get_max_floor_id():
+    max_id_floor = Floor.query.order_by(Floor.id.desc()).first()
+    if max_id_floor:
+        return max_id_floor.id
+    else:
+        return 1
+
+
+def get_max_comment_id():
+    max_id_comment = Comment.query.order_by(Comment.id.desc()).first()
+    if max_id_comment:
+        return max_id_comment.id
+    else:
+        return 1
+
 
 def get_details_by_id(_id: int):
-    details = sql.session.execute(select(Floor).where(Floor.id == _id))
+    details = sql.session.execute(select(Comment).where(Floor.id == _id))
     return details
 
 
@@ -30,11 +45,50 @@ def get_comments():
     return r.to_json()
 
 
-@comment_view.route('/detail')
-def get_comment_detail():
-    content = request.get_json()
-    temp_details = get_details_by_id(content.get(''))
+@comment_view.route('/create_floor', methods=['POST'])
+def create_floor():
     r = Response()
+    content = request.get_json()
+    try:
+        floor_model = FloorModel(**content)
+    except ValueError:
+        r.message = 'invalid param'
+        r.status_code = 406
+        return r.to_json()
+    floor_dict = floor_model.dict()
+    temp_floor: Floor = Floor(**floor_dict)
+    sql.session.add(temp_floor)
+    sql.session.commit()
+    temp_floor.id = get_max_floor_id()
+    return str(temp_floor.id)
+
+
+@comment_view.route('/create_comment', methods=['POST'])
+def create_comment():
+    r = Response()
+    content = request.get_json()
+    try:
+        comment_model = CommentModel(**content)
+    except ValueError:
+        r.message = 'invalid param'
+        r.status_code = 406
+        return r.to_json()
+    comment_dict = comment_model.dict()
+    temp_comment: Comment = Comment(**comment_dict)
+    sql.session.add(temp_comment)
+    sql.session.commit()
+    temp_comment.id = get_max_floor_id()
+    return str(temp_comment.id)
+
+
+@comment_view.route('/details', methods=['POST'])
+def get_comment_details():
+    content = request.get_json()
+    r = Response()
+    temp_details = get_details_by_id(content.get('floor_id'))
+    r.data = [_detail.to_json_lite() for _detail in temp_details]
+    return r.to_json()
+
 
 
 

@@ -78,6 +78,12 @@ class Problem(sql.Model):
             "derivation": self.derivation
         }
 
+    def to_json_special(self):
+        return {
+            "label": self.title,
+            "value": self.id
+        }
+
 
 class ProblemModel(BaseModel):
     title: str

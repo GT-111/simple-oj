@@ -10,12 +10,13 @@ from response import Response
 from extentions import login_manager, bcrypt
 from database import sql
 from account.model import User
+from upload.model import Upload, UploadModel
 from event.model import Event, EventModel, Enrollment, EnrollmentModel, Containing, ContainingModel
 from event import event_view
 
 
 def get_max_assignment_id():
-    max_id_assignment = Event.query.filter_by(type == 'assignment').order_by(Event.id.desc()).first()
+    max_id_assignment = Event.query.filter_by(type='assignment').order_by(Event.id.desc()).first()
     if max_id_assignment:
         return max_id_assignment.id
     else:
@@ -23,7 +24,7 @@ def get_max_assignment_id():
 
 
 def get_max_competition_id():
-    max_id_competition = Event.query.filter_by(type == 'competition').order_by(Event.id.desc()).first()
+    max_id_competition = Event.query.filter_by(type='competition').order_by(Event.id.desc()).first()
     if max_id_competition:
         return max_id_competition.id
     else:
@@ -35,14 +36,22 @@ def get_event_by_id(_id: int):
     return event.fetchone()[0]
 
 
-def get_competition_by_contributor_id(_id: int):
-    competition = sql.session.execute(select(Event).where(Event.contributor_id == _id and Event.type == 'competition'))
+def get_all_competition():
+    competition = sql.session.execute(select(Event).where(Event.type == 'competition'))
     return competition.fetchall()
 
 
-def get_assignment_by_contributor_id(_id: int):
-    assignment = sql.session.execute(select(Event).where(Event.contributor_id == _id and Event.type == 'assignment'))
+def get_all_assignment():
+    assignment = sql.session.execute(select(Event).where(Event.type == 'assignment'))
     return assignment.fetchall()
+
+
+def get_upload_by_id(_user_id: int, _context_id: int):
+    upload = sql.session.execute(select(Upload).where(Upload.user_id == _user_id and Upload.context_id == _context_id))
+    if upload.fetchone():
+        return upload.fetchone()[0]
+    else:
+        return None
 
 
 def get_competition_enrollment_by_id(_id: int):
@@ -83,22 +92,20 @@ def get_competition_id():
     return r.to_json()
 
 
-@event_view.route('/competition', methods=['POST'])
+@event_view.route('/competition')
 def get_competitions():
-    content = request.get_json()
     r = Response()
     r.status_code = 200
-    temp_events = get_competition_by_contributor_id(content.get('user_id'))
+    temp_events = Event.query.filter_by(type='competition').all()
     r.data = [_event.to_json_lite() for _event in temp_events]
     return r.to_json()
 
 
-@event_view.route('/assignment', methods=['POST'])
+@event_view.route('/assignment')
 def get_assignments():
-    content = request.get_json()
     r = Response()
     r.status_code = 200
-    temp_events = get_assignment_by_contributor_id(content.get('user_id'))
+    temp_events = Event.query.filter_by(type='assignment').all()
     r.data = [_event.to_json_lite() for _event in temp_events]
     return r.to_json()
 
@@ -137,3 +144,42 @@ def create_competition():
     sql.session.commit()
     temp_competition.id = get_max_competition_id()
     return str(temp_competition.id)
+
+
+@event_view.route('/assignment_detail', methods=['POST'])
+def assignment_detail():
+    content = request.get_json()
+    r = Response()
+    temp_assignment: Event = get_event_by_id(content.get('event_id'))
+    r.data = temp_assignment.to_json()
+    r.status_code = 200
+    return r.to_json()
+
+
+@event_view.route('/competition_detail', methods=['POST'])
+def competition_detail():
+    content = request.get_json()
+    r = Response()
+    temp_competition: Event = get_event_by_id(content.get('event_id'))
+    r.data = temp_competition.to_json()
+    r.status_code = 200
+    return r.to_json()
+
+
+@event_view.route('/backward', methods=['POST'])
+def back_detail():
+    content = request.get_json()
+    r = Response()
+    temp_upload: Upload = get_upload_by_id(content.get('user_id'), content.get('event_id'))
+    if temp_upload:
+        r.data = temp_upload.to_json()
+        r.status_code = 200
+        return r.to_json()
+    else:
+        temp_upload = Upload()
+        temp_upload.grade = -1
+        temp_upload.comment = ""
+        r.data = temp_upload.to_json()
+        r.status_code = 200
+        return r.to_json()
+

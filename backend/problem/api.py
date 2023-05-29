@@ -72,3 +72,12 @@ def create_problem():
     sql.session.commit()
     temp_problem.id = get_max_id()
     return str(temp_problem.id)
+
+
+@problem_view.route('/', methods=['POST'])
+def get_special_problem():
+    problems = Problem.query.all()
+    r = Response()
+    r.status_code = 200
+    r.data = [_problem.to_json_special() for _problem in problems.items]
+    return r.to_json()

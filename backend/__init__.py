@@ -30,6 +30,8 @@ def create_app():
 
     @app.route('/', methods=['GET'])
     def index():
+        for header, value in request.headers.items():
+            print(header + " " + value)
         """Returns the applications index page."""
         return "don't panic"
 

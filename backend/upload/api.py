@@ -41,6 +41,11 @@ def get_problem_by_id(_id: int):
     return problem.fetchone()[0]
 
 
+def get_upload_by_id(_user_id: int, _context_id: int):
+    upload = sql.session.execute(select(Upload).where(Upload.user_id == _user_id and Upload.context_id == _context_id))
+    return upload.fetchone()[0]
+
+
 @upload_view.route('/assignment', methods=['POST'])
 def assignment():
     content = request.get_json()
@@ -57,6 +62,8 @@ def assignment():
     temp_oss.user_id = content['user_id']
     upload_dict = upload_model.dict()
     temp_upload = Upload(**upload_dict)
+    temp_upload.user_id = content['user_id']
+
     sql.session.add(temp_upload)
     r.data = temp_upload.to_json()
     sql.session.commit()
@@ -70,8 +77,8 @@ def zip():
     r = Response()
     temp_oss: Oss = get_oss_by_id(content['oss_id'])
     temp_problem: Problem = get_problem_by_id(content['problem_id'])
-    print(content['user_id'])
-    temp_oss.user_id = content['user_id']
+    # print(content['user_id'])
+    # temp_oss.user_id = content['user_id']
     temp_problem.oss_id = content['oss_id']
     sql.session.commit()
     r.data = temp_problem.to_json()
@@ -80,6 +87,7 @@ def zip():
 
 @upload_view.route('/upload_zip', methods=['POST'])
 def upload_zip():
+    print('-------------------------------------------')
     r = Response()
     f = request.files.get('file')
     serial_num = 0
@@ -110,7 +118,7 @@ def upload_assignment():
     if f.filename != '':
         print(f.filename)
         serial_num = get_max_id_plus1()
-        serial = str(serial_num) + '.zip'
+        serial = str(serial_num) + '.pdf'
         bucket.put_object(serial, f)
         r.status_code = 200
         oss_model = OssModel(user_id=-1, type='assignment')
@@ -124,3 +132,23 @@ def upload_assignment():
         r.message = 'no file uploaded'
         r.status_code = 400
     return str(serial_num)
+
+
+@upload_view.route('/submissions')
+def submission():
+    r = Response()
+    temp_uploads = Upload.query.all()
+    r.data = [_upload.to_json_lite() for _upload in temp_uploads]
+    return r.to_json()
+
+
+@upload_view.route('/criteria', methods=['POST'])
+def send_criteria():
+    r = Response()
+    content = request.get_json()
+    temp_upload: Upload = get_upload_by_id(content.get('user_id'), content.get('context_id'))
+    temp_upload.grade = content.get('grade')
+    temp_upload.comment = content.get('comment')
+    sql.session.commit()
+    return 'ok'
+

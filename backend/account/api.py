@@ -50,13 +50,14 @@ def login():
     if temp_user is None or not bcrypt.check_password_hash(temp_user.password, password):
         r.message = 'no such user or wrong password'
         r.status_code = 401
-    try:
-        login_user(temp_user)
-    except LoginManager.unauthorized:
-        r.message = 'unauthorized user'
-        r.status_code = 401
+    # try:
+    #     login_user(temp_user)
+    # except LoginManager.unauthorized:
+    #     r.message = 'unauthorized user'
+    #     r.status_code = 401
     r.message = 'user have been logged in'
     r.status_code = 200
+    r.data = temp_user.to_json()
     return r.to_json()
 
 

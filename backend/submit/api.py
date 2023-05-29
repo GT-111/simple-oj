@@ -43,22 +43,26 @@ result_state[6] = 'COMPILE_ERROR'
 
 @submit_view.route('/judger/code', methods=['POST'])
 def require():
-    content = request.get_json()
-    record = get_submit_by_id(content.get('task_id'))
+    content = int(request.get_data().decode('utf-8'))
+    print(content)
+    record = get_submit_by_id(content)
+    print(record.code)
     return record.code
 
 
 @submit_view.route('/judger/result', methods=['POST'])
 def result():
-    content = request.get_json()
-    # data = {
-    #     "task_id": task_id,
-    #     "code": state_code,
-    #     "detail": detail
-    # }
-    print(content.get('task_id'))
-    print(content.get('code'))
-    print(content.get('detail'))
+    raw_content = request.get_data()
+    print(raw_content.decode())
+    content = json.loads(raw_content.decode())
+    # print(json.dumps(content))
+    # print(content.get('task_id'))
+    # print(content.get('code'))
+    # print(content.get('detail'))
+    temp_submit: Submit = get_submit_by_id(int(content.get('task_id')))
+    temp_submit.status = result_state.get(int(content.get('code')))
+    temp_submit.returned = str(content.get('detail'))
+    sql.session.commit()
     return 'ok'
 
 # <<< judger <<< #
@@ -85,7 +89,13 @@ def submit():
     # >>> message queue >>> #
     task_id = get_max_id()
     problem_id = submit_model.problem_id
-    ret = "{" + "task_id: " + str(task_id) + ", problem_id: " + str(problem_id) + "}"
+    language = submit_model.language.lower()
+    #ret = "{" + "task_id: " + str(task_id) + ", problem_id: " + str(problem_id) + ", language: " + language + "}"
+    ret = json.dumps({
+        "task_id" : str(task_id),
+        "problem_id" : str(problem_id),
+        "language" : language
+    })
     socket.send_string(ret)
     # >>> message queue >>> #
 
