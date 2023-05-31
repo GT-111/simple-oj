@@ -109,9 +109,6 @@ class Containing(sql.Model):
         sql.Integer,
         primary_key=True
     )
-    serial = sql.Column(
-        sql.Integer
-    )
     event_id = sql.Column(
         sql.Integer
     )
@@ -126,7 +123,6 @@ class Containing(sql.Model):
         return {
             "containing": {
                 "id": self.id,
-                "serial": self.serial,
                 "event_id": self.event_id,
                 "problem_id": self.problem_id
             }
@@ -135,13 +131,11 @@ class Containing(sql.Model):
     def to_json_lite(self):
         return {
             "id": self.id,
-            "serial": self.serial,
             "event_id": self.event_id,
             "problem_id": self.problem_id
         }
 
 
 class ContainingModel(BaseModel):
-    serial: int
     event_id: int
     problem_id: int

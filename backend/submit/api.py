@@ -9,6 +9,7 @@ from response import Response
 from database import sql
 from extentions import login_manager, bcrypt
 from submit.model import Submit, SubmitModel
+from problem.model import Problem, ProblemModel
 from submit import submit_view
 
 def get_max_id():
@@ -21,6 +22,12 @@ def get_max_id():
 def get_submit_by_id(_id: int):
     submit = sql.session.execute(select(Submit).where(Submit.id == _id))
     return submit.fetchone()[0]
+
+
+def get_problem_by_id(_id: int):
+    problem = sql.session.execute(select(Problem).where(Problem.id == _id))
+    return problem.fetchone()[0]
+
 
 # >>> judger >>> #
 import zmq
@@ -88,7 +95,10 @@ def submit():
 
     # >>> message queue >>> #
     task_id = get_max_id()
-    problem_id = submit_model.problem_id
+    # get problem's oss id
+    temp_problem: Problem = get_problem_by_id(submit_model.problem_id)
+    problem_id = temp_problem.oss_id
+
     language = submit_model.language.lower()
     #ret = "{" + "task_id: " + str(task_id) + ", problem_id: " + str(problem_id) + ", language: " + language + "}"
     ret = json.dumps({

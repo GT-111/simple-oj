@@ -6,6 +6,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import select
 
 from auth import filter
+from problem.model import Problem, ProblemModel
 from response import Response
 from extentions import login_manager, bcrypt
 from database import sql
@@ -48,10 +49,10 @@ def get_all_assignment():
 
 def get_upload_by_id(_user_id: int, _context_id: int):
     upload = sql.session.execute(select(Upload).where(Upload.user_id == _user_id and Upload.context_id == _context_id))
-    if upload.fetchone():
-        return upload.fetchone()[0]
-    else:
+    if upload.first() is None:
         return None
+    else:
+        return sql.session.execute(select(Upload).where(Upload.user_id == _user_id and Upload.context_id == _context_id)).fetchone()[0]
 
 
 def get_competition_enrollment_by_id(_id: int):
@@ -72,6 +73,7 @@ def get_assignment_enrollment_by_id(_id: int):
         if temp_event.type == 'assignment':
             results.append(temp_event)
     return [_event.to_json_lite() for _event in results]
+
 
 
 @event_view.route('/assignment_id', methods=['POST'])
@@ -143,6 +145,12 @@ def create_competition():
     sql.session.add(temp_competition)
     sql.session.commit()
     temp_competition.id = get_max_competition_id()
+    # create containing relations
+    for problem in content.get('problems'):
+        containing_model = ContainingModel(event_id=temp_competition.id, problem_id=int(problem))
+        temp_containing: Containing = Containing(**containing_model.dict())
+        sql.session.add(temp_containing)
+        sql.session.commit()
     return str(temp_competition.id)
 
 
@@ -183,3 +191,23 @@ def back_detail():
         r.status_code = 200
         return r.to_json()
 
+
+def get_problems_in_competition(_id: int):
+    problems = sql.session.execute(select(Containing).where(Containing.event_id == _id))
+    return problems.all()
+
+def get_problem_by_id(_id: int):
+    problem = sql.session.execute(select(Problem).where(Problem.id == _id))
+    return problem.fetchone()[0]
+
+
+@event_view.route('/details', methods=['POST'])
+def get_details():
+    content = request.get_json()
+    r = Response()
+    result = []
+    for record in get_problems_in_competition(content.get('event_id')):
+        result.append(get_problem_by_id(record[0].problem_id))
+    r.data = [_problem.to_json_lite() for _problem in result]
+    r.status_code = 200
+    return r.to_json()

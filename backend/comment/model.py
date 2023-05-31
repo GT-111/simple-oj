@@ -15,8 +15,8 @@ class Floor(sql.Model):
     title = sql.Column(
         sql.String(100)
     )
-    contributor_id = sql.Column(
-        sql.Integer
+    contributor = sql.Column(
+        sql.Text
     )
     create_at = sql.Column(
         sql.DateTime
@@ -36,8 +36,8 @@ class Floor(sql.Model):
             "floor": {
                 "id": self.id,
                 "title": self.title,
-                "contributor_id": self.contributor_id,
-                "create_at": sql_datetime_to_datetime(self.start_at).isoformat(),
+                "contributor": self.contributor,
+                "create_at": sql_datetime_to_datetime(self.create_at).isoformat(),
                 "description": self.description
             }
         }
@@ -46,15 +46,16 @@ class Floor(sql.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "contributor_id": self.contributor_id,
-            "create_at": sql_datetime_to_datetime(self.start_at).isoformat(),
+            "contributor": self.contributor,
+            "create_at": sql_datetime_to_datetime(self.create_at).isoformat(),
             "description": self.description
         }
 
 
 class FloorModel(BaseModel):
+    create_at: datetime
     title: str
-    contributor_id: int
+    contributor: str
     description: str
 
 
@@ -64,8 +65,11 @@ class Comment(sql.Model):
         sql.Integer,
         primary_key=True
     )
-    user_id = sql.Column(
+    floor_id = sql.Column(
         sql.Integer
+    )
+    contributor = sql.Column(
+        sql.Text
     )
     content = sql.Column(
         sql.Text
@@ -74,10 +78,22 @@ class Comment(sql.Model):
         sql.DateTime
     )
 
+    def to_json_lite(self):
+        return {
+            "id": self.id,
+            "floor_id": self.floor_id,
+            "contributor": self.contributor,
+            "create_at": sql_datetime_to_datetime(self.create_at).isoformat(),
+            "content": self.content
+        }
+
 
 class CommentModel(BaseModel):
-    user_id: int
+    create_at: datetime
+    contributor: str
     content: str
+    floor_id: int
+
 
 
 

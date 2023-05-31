@@ -4,13 +4,13 @@ from flask import Flask, g, request
 from flask_cors import CORS
 
 from account import account_view
-from competition import competition_view
 from database import sql
 from extentions import bcrypt, login_manager, mail
 from problem import problem_view
 from submit import submit_view
 from upload import upload_view
 from event import event_view
+from comment import comment_view
 
 
 def create_app():
@@ -52,7 +52,7 @@ def register_blueprints(app):
     app.register_blueprint(upload_view, url_prefix='/upload')
     app.register_blueprint(event_view, url_prefix='/event')
     app.register_blueprint(submit_view, url_prefix='/submit')
-    app.register_blueprint(competition_view, url_prefix='/')
+    app.register_blueprint(comment_view, url_prefix='/comment')
 
 
 app = create_app()
