@@ -57,21 +57,6 @@ create table if not exists oj.oss
     type    text
 );
 
-drop table if exists oj.event;
-create table if not exists oj.event
-(
-    id             bigint unsigned auto_increment
-        primary key,
-    title          varchar(100),
-    contributor_id int,
-    type           text, # assignment / competition
-    start_at       datetime,
-    due_at         datetime,
-    description    text,
-    constraint id
-        unique (id)
-);
-
 drop table if exists oj.enrollment;
 create table if not exists oj.enrollment
 (
@@ -84,13 +69,45 @@ drop table if exists oj.containing;
 create table if not exists oj.containing
 (
     id         bigint unsigned auto_increment primary key,
-    serial     int,
     event_id   int,
     problem_id int
 );
 
+drop table if exists oj.event;
+create table if not exists oj.event
+(
+    id          bigint unsigned auto_increment
+        primary key,
+    title       varchar(100),
+    type        text, # assignment / competition
+    start_at    datetime,
+    due_at      datetime,
+    description text,
+    constraint id
+        unique (id)
+);
 
-################ check ################
+drop table if exists oj.floor;
+create table if not exists oj.floor
+(
+    id          bigint unsigned auto_increment
+        primary key,
+    title       varchar(100),
+    contributor text,
+    create_at   datetime,
+    description text
+);
+
+drop table if exists oj.comment;
+create table if not exists oj.comment
+(
+    id          bigint unsigned auto_increment
+        primary key,
+    contributor text,
+    floor_id    int,
+    content     text,
+    create_at   datetime
+);
 
 drop table if exists oj.submit;
 create table if not exists oj.submit
@@ -109,49 +126,16 @@ create table if not exists oj.submit
 );
 
 
+# truncate table oj.comment;
+# truncate table oj.containing;
+# truncate table oj.detail;
+# truncate table oj.enrollment;
+# truncate table oj.event;
+# truncate table oj.oss;
+# truncate table oj.problem;
+# truncate table oj.submit;
+# truncate table oj.user;
+# truncate table oj.user_upload;
 
-drop table if exists oj.private_problem;
-create table if not exists oj.private_problem
-(
-    id          bigint unsigned auto_increment
-        primary key,
-    title       varchar(100),
-    contributor varchar(100),
-    time_limit  int,
-    content     text,
-    year        text,
-    difficulty  text,
-    derivation  text,
-    constraint id unique (id)
-);
-
-drop table if exists oj.competition;
-create table if not exists oj.competition
-(
-    id          bigint unsigned auto_increment
-        primary key,
-    title       varchar(100),
-    contributor varchar(100),
-    create_at   datetime,
-    start_at    datetime,
-    due_at      datetime,
-    type        text,
-    description text,
-    constraint id
-        unique (id)
-);
-
-drop table if exists oj.private_submit;
-create table if not exists oj.private_submit
-(
-    id                 bigint unsigned auto_increment primary key,
-    private_problem_id int,
-    user_id            int,
-    create_time        datetime,
-    code               text,
-    language           varchar(100),
-    status             varchar(100),
-    returned           text
-);
-
+################ check ################
 
